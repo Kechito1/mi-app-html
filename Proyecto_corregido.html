@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diario Emocional | Tu espacio personal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --secondary: #ff6584;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --info: #2196f3;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --border-radius: 16px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .user-actions button {
+            background: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-actions button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: 100%;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .card-header i {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        
+        .emotion-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .date-input {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        .date-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .emotion-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .emotion-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .emotion-option {
+            padding: 18px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .emotion-option:hover {
+            border-color: var(--primary);
+            background: rgba(108, 99, 255, 0.05);
+        }
+        
+        .emotion-option.selected {
+            border-color: var(--primary);
+            background: rgba(108, 99, 255, 0.1);
+            transform: scale(1.03);
+        }
+        
+        .emotion-option i {
+            font-size: 2rem;
+        }
+        
+        .emotion-option .emotion-name {
+            font-weight: 600;
+        }
+        
+        .intensity-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .intensity-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 10px;
+            background: linear-gradient(to right, #4caf50, #ff9800, #f44336);
+            outline: none;
+        }
+        
+        .intensity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .intensity-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .note-input {
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            min-height: 120px;
+            resize: vertical;
+            transition: var(--transition);
+        }
+        
+        .note-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.4);
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            height: 100%;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .time-btn {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .time-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        .ai-insights {
+            margin-top: 30px;
+        }
+        
+        .insight-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .insight-header i {
+            font-size: 1.5rem;
+            color: var(--info);
+        }
+        
+        .insight-content {
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+        
+        .keyword-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .keyword {
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--info);
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .entries-list {
+            margin-top: 25px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .entry-item {
+            background: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+        
+        .entry-item:hover {
+            transform: translateX(5px);
+            background: #f0f0f0;
+        }
+        
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .entry-emotions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .emotion-tag {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .emotion-happy {
+            background: rgba(76, 175, 80, 0.15);
+            color: #4caf50;
+        }
+        
+        .emotion-sad {
+            background: rgba(33, 150, 243, 0.15);
+            color: #2196f3;
+        }
+        
+        .emotion-angry {
+            background: rgba(244, 67, 54, 0.15);
+            color: #f44336;
+        }
+        
+        .emotion-excited {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ff9800;
+        }
+        
+        .emotion-calm {
+            background: rgba(156, 39, 176, 0.15);
+            color: #9c27b0;
+        }
+        
+        .emotion-anxious {
+            background: rgba(121, 85, 72, 0.15);
+            color: #795548;
+        }
+        
+        .entry-content {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .intensity-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .intensity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+        
+        .intensity-dot.active {
+            background: var(--primary);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .magic-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.5s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-heart"></i>
+                <h1>Diario Emocional</h1>
+            </div>
+            <div class="user-actions">
+                <button id="themeToggle"><i class="fas fa-moon"></i> Modo Oscuro</button>
+            </div>
+        </header>
+        
+        <div class="dashboard">
+            <!-- Sección para registrar emociones -->
+            <div class="card floating">
+                <div class="card-header">
+                    <h2>Registrar Emoción</h2>
+                    <i class="fas fa-smile"></i>
+                </div>
+                <form class="emotion-form">
+                    <div class="form-group">
+                        <label for="entryDate">Fecha</label>
+                        <input type="date" id="entryDate" class="date-input" value="">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>¿Cómo te sientes hoy?</label>
+                        <div class="emotion-options">
+                            <div class="emotion-option" data-emotion="feliz">
+                                <i class="fas fa-laugh-beam"></i>
+                                <div class="emotion-name">Feliz</div>
+                            </div>
+                            <div class="emotion-option" data-emotion="triste">
+                                <i class="fas fa-sad-tear"></i>
+                                <div class="emotion-name">Triste</div>
+                            </div>
+                            <div class="emotion-option" data-emotion="enojado">
+                                <i class="fas fa-angry"></i>
+                                <div class="emotion-name">Enojado</div>
+                            </div>
+                            <div class="emotion-option" data-emotion="emocionado">
+                                <i class="fas fa-grin-stars"></i>
+                                <div class="emotion-name">Emocionado</div>
+                            </div>
+                            <div class="emotion-option" data-emotion="calmado">
+                                <i class="fas fa-meh-blank"></i>
+                                <div class="emotion-name">Calmado</div>
+                            </div>
+                            <div class="emotion-option" data-emotion="ansioso">
+                                <i class="fas fa-flushed"></i>
+                                <div class="emotion-name">Ansioso</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="intensity">Intensidad</label>
+                        <div class="intensity-container">
+                            <input type="range" min="1" max="5" value="3" class="intensity-slider" id="intensity">
+                            <div class="intensity-labels">
+                                <span>Baja</span>
+                                <span>Media</span>
+                                <span>Alta</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="note">Notas adicionales</label>
+                        <textarea id="note" class="note-input" placeholder="Describe cómo te sientes, qué causó estas emociones, o cualquier cosa que quieras recordar..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn pulse">
+                        <i class="fas fa-save"></i> Guardar Entrada
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Resumen de emociones recientes -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Tus Emociones Recientes</h2>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="entries-list" id="entriesList">
+                    <!-- Las entradas se mostrarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gráficos y análisis -->
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Distribución de Emociones</h3>
+                    <div class="time-filter">
+                        <button class="time-btn active">7 días</button>
+                        <button class="time-btn">30 días</button>
+                        <button class="time-btn">Todo</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="emotionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>Tendencias de Intensidad</h3>
+                    <div class="time-filter">
+                        <button class="time-btn active">Semanal</button>
+                        <button class="time-btn">Mensual</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="intensityChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Análisis de IA -->
+        <div class="ai-insights">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Análisis de Tendencias</h2>
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="insight-card bounce-in">
+                    <div class="insight-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Insights de esta semana</h3>
+                    </div>
+                    <div class="insight-content">
+                        <p>Esta semana has mostrado una tendencia positiva en tu estado emocional. Los días martes y jueves fueron tus días más felices, coincidiendo con actividades sociales y tiempo al aire libre. Notamos que mencionaste varias veces "paseo en el parque" y "cena con amigos", lo que parece ser un factor importante para tu bienestar.</p>
+                        <p>Sin embargo, el miércoles experimentaste un aumento en la ansiedad. Tus notas mencionan "fecha límite" y "mucho trabajo", lo que podría indicar que la carga laboral está afectando tu estado emocional.</p>
+                        
+                        <div class="keyword-container">
+                            <span class="keyword">paseo en el parque</span>
+                            <span class="keyword">cena con amigos</span>
+                            <span class="keyword">fecha límite</span>
+                            <span class="keyword">mucho trabajo</span>
+                            <span class="keyword">ejercicio</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Diario Emocional &copy; 2023 | Tu espacio personal para entender tus emociones</p>
+        </footer>
+    </div>
+    
+    <div class="magic-particles" id="particles"></div>
+    
+    <script>
+        // Establecer fecha actual por defecto
+        document.getElementById('entryDate').valueAsDate = new Date();
+        
+        // Manejar selección de emociones
+        const emotionOptions = document.querySelectorAll('.emotion-option');
+        let selectedEmotion = null;
+        
+        emotionOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                emotionOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedEmotion = option.dataset.emotion;
+                
+                // Efecto visual al seleccionar
+                createParticles(option);
+            });
+        });
+        
+        // Crear partículas mágicas
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const particles = document.getElementById('particles');
+            particles.innerHTML = '';
+            
+            const colors = ['#6c63ff', '#ff6584', '#4caf50', '#ff9800', '#2196f3'];
+            
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Posición aleatoria alrededor del elemento
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 20 + Math.random() * 50;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                // Tamaño y color aleatorios
+                const size = 5 + Math.random() * 10;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = ${size}px;
+                particle.style.height = ${size}px;
+                particle.style.backgroundColor = color;
+                particle.style.left = ${x}px;
+                particle.style.top = ${y}px;
+                
+                // Animación
+                particle.style.animation = floatAway ${1 + Math.random() * 2}s forwards;
+                
+                particles.appendChild(particle);
+                
+                // Remover partícula después de la animación
+                setTimeout(() => {
+                    particle.remove();
+                }, 2000);
+            }
+        }
+        
+        // Crear gráficos con Chart.js
+        // Gráfico de emociones (doughnut)
+        const emotionCtx = document.getElementById('emotionChart').getContext('2d');
+        const emotionChart = new Chart(emotionCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Feliz', 'Triste', 'Enojado', 'Emocionado', 'Calmado', 'Ansioso'],
+                datasets: [{
+                    data: [25, 10, 5, 20, 25, 15],
+                    backgroundColor: [
+                        'rgba(76, 175, 80, 0.7)',
+                        'rgba(33, 150, 243, 0.7)',
+                        'rgba(244, 67, 54, 0.7)',
+                        'rgba(255, 152, 0, 0.7)',
+                        'rgba(156, 39, 176, 0.7)',
+                        'rgba(121, 85, 72, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(76, 175, 80, 1)',
+                        'rgba(33, 150, 243, 1)',
+                        'rgba(244, 67, 54, 1)',
+                        'rgba(255, 152, 0, 1)',
+                        'rgba(156, 39, 176, 1)',
+                        'rgba(121, 85, 72, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true
+                }
+            }
+        });
+        
+        // Gráfico de intensidad (line)
+        const intensityCtx = document.getElementById('intensityChart').getContext('2d');
+        const intensityChart = new Chart(intensityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'Intensidad Emocional',
+                    data: [3, 4, 2, 5, 3, 4, 5],
+                    backgroundColor: 'rgba(108, 99, 255, 0.1)',
+                    borderColor: 'rgba(108, 99, 255, 1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: 'rgba(108, 99, 255, 1)',
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Ejemplo de entradas
+        const sampleEntries = [
+            {
+                date: "2023-10-15",
+                emotions: ["feliz", "emocionado"],
+                intensity: 4,
+                note: "Hoy tuve una reunión muy productiva en el trabajo y luego fui a cenar con amigos. Fue un día excelente!"
+            },
+            {
+                date: "2023-10-14",
+                emotions: ["triste", "ansioso"],
+                intensity: 3,
+                note: "Me sentí un poco abrumado con las responsabilidades. Necesito organizar mejor mi tiempo."
+            },
+            {
+                date: "2023-10-13",
+                emotions: ["calmado"],
+                intensity: 2,
+                note: "Un día tranquilo en casa. Leí un libro y disfruté del silencio."
+            }
+        ];
+        
+        // Función para mostrar entradas
+        function renderEntries() {
+            const entriesList = document.getElementById('entriesList');
+            entriesList.innerHTML = '';
+            
+            sampleEntries.forEach(entry => {
+                const entryEl = document.createElement('div');
+                entryEl.className = 'entry-item';
+                
+                // Formatear fecha
+                const dateObj = new Date(entry.date);
+                const formattedDate = dateObj.toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long'
+                });
+                
+                // Obtener clase CSS para cada emoción
+                const emotionClasses = {
+                    'feliz': 'emotion-happy',
+                    'triste': 'emotion-sad',
+                    'enojado': 'emotion-angry',
+                    'emocionado': 'emotion-excited',
+                    'calmado': 'emotion-calm',
+                    'ansioso': 'emotion-anxious'
+                };
+                
+                // Crear elementos para cada emoción
+                const emotionsHtml = entry.emotions.map(emotion => {
+                    return `<div class="emotion-tag ${emotionClasses[emotion]}">${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</div>`;
+                }).join('');
+                
+                // Crear indicadores de intensidad
+                let intensityDots = '';
+                for (let i = 1; i <= 5; i++) {
+                    intensityDots += `<div class="intensity-dot ${i <= entry.intensity ? "active" : ""}"></div>`;
+                }
+                
+                entryEl.innerHTML = `
+                    <div class="entry-header">
+                        <div class="entry-date">${formattedDate}</div>
+                        <div class="intensity-display">
+                            ${intensityDots}
+                            <span>Intensidad: ${entry.intensity}/5</span>
+                        </div>
+                    </div>
+                    <div class="entry-emotions">
+                        ${emotionsHtml}
+                    </div>
+                    <div class="entry-content">
+                        <p>${entry.note}</p>
+                    </div>
+                `;
+                
+                entriesList.appendChild(entryEl);
+            });
+        }
+        
+        // Manejar envío del formulario
+        const emotionForm = document.querySelector('.emotion-form');
+        emotionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!selectedEmotion) {
+                alert('Por favor selecciona una emoción');
+                return;
+            }
+            
+            const date = document.getElementById('entryDate').value;
+            const intensity = document.getElementById('intensity').value;
+            const note = document.getElementById('note').value;
+            
+            // Agregar a la lista de entradas
+            sampleEntries.unshift({
+                date: date,
+                emotions: [selectedEmotion],
+                intensity: parseInt(intensity),
+                note: note
+            });
+            
+            // Actualizar la lista
+            renderEntries();
+            
+            // Resetear formulario
+            emotionOptions.forEach(opt => opt.classList.remove('selected'));
+            selectedEmotion = null;
+            document.getElementById('intensity').value = 3;
+            document.getElementById('note').value = '';
+            document.getElementById('entryDate').valueAsDate = new Date();
+            
+            // Efecto de éxito
+            showSuccessEffect();
+        });
+        
+        // Mostrar efecto de éxito
+        function showSuccessEffect() {
+            const particles = document.getElementById('particles');
+            particles.innerHTML = '';
+            
+            // Crear confeti
+            const colors = ['#6c63ff', '#ff6584', '#4caf50', '#ff9800', '#2196f3'];
+            const confettiCount = 100;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('particle');
+                
+                // Posición aleatoria en la pantalla
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                
+                // Tamaño y color aleatorios
+                const size = 5 + Math.random() * 15;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const rotation = Math.random() * 360;
+                
+                confetti.style.width = ${size}px;
+                confetti.style.height = ${size}px;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = ${x}px;
+                confetti.style.top = ${y}px;
+                confetti.style.transform = rotate(${rotation}deg);
+                
+                // Animación
+                confetti.style.animation = fall ${2 + Math.random() * 3}s forwards;
+                
+                particles.appendChild(confetti);
+                
+                // Remover confeti después de la animación
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            // Agregar animación al botón
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.classList.remove('pulse');
+            void submitBtn.offsetWidth; // Trigger reflow
+            submitBtn.classList.add('pulse');
+        }
+        
+        // Cambiar tema
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            themeToggle.innerHTML = document.body.classList.contains('dark-theme') ? 
+                '<i class="fas fa-sun"></i> Modo Claro' : 
+                '<i class="fas fa-moon"></i> Modo Oscuro';
+        });
+        
+        // Inicializar la aplicación
+        renderEntries();
+        
+        // Animación para las tarjetas
+        const cards = document.querySelectorAll('.card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = 1;
+                card.style.transform = 'translateY(0)';
+            }, 200 * index);
+        });
+        
+        // Animación para el encabezado
+        const logo = document.querySelector('.logo');
+        setTimeout(() => {
+            logo.classList.add('bounce-in');
+        }, 500);
+    </script>
+</body>
+</html>
